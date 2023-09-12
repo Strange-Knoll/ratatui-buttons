@@ -147,6 +147,24 @@ impl StatefulWidget for Button<'_>{
                             };
                         }
                     },
+                    MouseEventKind::Up(MouseButton::Left) => {
+                        if mouse_in_rect(mouse.column, mouse.row, &area) {
+                            //hover style
+                            button = self.hovered_block;
+                        }
+                    },
+                    MouseEventKind::Up(MouseButton::Right) => {
+                        if mouse_in_rect(mouse.column, mouse.row, &area) {
+                            //hover style
+                            button = self.hovered_block;
+                        }
+                    },
+                    MouseEventKind::Up(MouseButton::Middle) => {
+                        if mouse_in_rect(mouse.column, mouse.row, &area) {
+                            //hover style
+                            button = self.hovered_block;
+                        }
+                    },
                     _ =>{}
                 }
             }
