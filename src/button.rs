@@ -101,7 +101,7 @@ impl <'a> Button<'a>{
 
 
 impl StatefulWidget for Button<'_>{
-    type State = Event ;
+    type State = Option<Event>;
     fn render(mut self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
 
         let text = self.text;
@@ -109,7 +109,7 @@ impl StatefulWidget for Button<'_>{
         let mut button = self.normal_block.clone();
 
         match state{
-            Event::Mouse(mouse) => {
+            Some(Event::Mouse(mouse)) => {
                 match mouse.kind{
                     MouseEventKind::Moved => {
                         if mouse_in_rect(mouse.column, mouse.row, &area) {

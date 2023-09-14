@@ -43,21 +43,26 @@ fn restore_terminal(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result
 //main loop
 fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
 
-    let mut input:Event = Event::FocusGained;
+    let mut input:Option<Event> = None;
     let mut text = "that is a button.\ntry clicking it";
     let text = Arc::new(Mutex::new(text));
     
     loop {
+        //poll input events and store them in input
         if event::poll(Duration::from_millis(100))?{
-            input = event::read()?;
+            input = Some(event::read()?);
         }
         
+        //read input
         match input{
-            Event::Key(key) => {
+            //read key events
+            Some(Event::Key(key)) => {
+                //quit on q
                 if key.code == KeyCode::Char('q'){
                     break;
                 }
             }
+            None => {input = None;}
             _ => {}
         }
 
@@ -96,11 +101,15 @@ fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
             let text_c = Arc::clone(&text);
             //button
             let button = Button::default()
+                    // set the text of the button
                     .text("default button,\nclick me")
+                    // set the alignment of the text
                     .alignment(Alignment::Center)
+                    // define left click action with boxed closure
                     .left_click(Box::new(move || {
                         *text_c.lock().unwrap() = "you clicked the button";
                     }));
+            //render button which takes the input we stored earlier as its state
             frame.render_stateful_widget(button, layout3[0], &mut input);
 
             //clone text to use in btn closure
@@ -109,6 +118,8 @@ fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
             let button2 = Button::default()
                     .text("custom button,\nno, click me")
                     .alignment(Alignment::Center)
+                    //here we set the normal, hovered, 
+                    //and pressed blocks for this button
                     .normal_block(Block::default()
                         .border_type(BorderType::Rounded)
                         .borders(Borders::ALL))
